@@ -1,0 +1,480 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recommendation Systems | ML Blog</title>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --purple: #7041c6;
+  --pink: #ffadd4;
+  --ink: #211c52;
+  --lavender: #f2edff;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  background: #faf8ff;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+nav {
+  background: white;
+  padding: 14px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-shadow: 0 3px 15px #ded5f5;
+}
+
+.logo { font-size: 22px; font-weight: bold; }
+
+nav a {
+  color: var(--purple);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover { color: #ed64ac; }
+
+.hero {
+  margin: 24px auto;
+  width: 92%;
+  padding: 35px;
+  border-radius: 25px;
+  background: linear-gradient(120deg, #e8dcff, #ffe2f0, #fff1c9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hero-content { flex: 1 1 260px; }
+
+.hero h1 {
+  font-size: clamp(32px, 6vw, 55px);
+  line-height: 1.15;
+  margin: 0;
+}
+
+.hero p { font-size: 18px; }
+
+.hero-art {
+  flex: 1 1 200px;
+  text-align: center;
+  font-size: clamp(65px, 12vw, 115px);
+  padding: 12px;
+}
+
+.pill {
+  display: inline-block;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  color: var(--purple);
+  font-weight: bold;
+}
+
+main {
+  width: 92%;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  border: 1px solid #eadfff;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 22px;
+  box-shadow: 0 6px 18px #30205b0d;
+}
+
+.card h2 { margin-top: 0; }
+
+.pink { background: #fff0f7; }
+.blue { background: #edf6ff; }
+.yellow { background: #fff8e5; }
+.green { background: #edfff4; }
+.lavender { background: #f1ebff; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.mini {
+  padding: 18px;
+  border-radius: 16px;
+  background: white;
+  border: 1px solid #e9defd;
+}
+
+.emoji {
+  font-size: 42px;
+  text-align: center;
+  display: block;
+}
+
+.mini h3 { text-align: center; }
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  text-align: center;
+}
+
+.flow-step {
+  border-radius: 16px;
+  padding: 18px 10px;
+  background: white;
+  border: 2px dashed #c8a9ff;
+}
+
+.arrow {
+  font-size: 25px;
+  color: #9256d6;
+  font-weight: bold;
+}
+
+.example {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border-radius: 14px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.example-icon { font-size: 35px; }
+
+.example p { margin: 0; }
+
+select, button {
+  font: inherit;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+select {
+  width: 100%;
+  border: 2px solid #d8c4ff;
+  background: white;
+  color: var(--ink);
+  margin: 8px 0 14px;
+}
+
+button {
+  border: none;
+  background: var(--purple);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { background: #51249c; }
+
+button:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 3px solid #ed64ac;
+  outline-offset: 3px;
+}
+
+#results { margin-top: 18px; }
+
+.movie {
+  background: white;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid #e5d8ff;
+}
+
+.movie span { font-size: 25px; }
+
+.conclusion {
+  text-align: center;
+  background: linear-gradient(120deg, #eee2ff, #ffe4f1);
+}
+
+footer {
+  margin-top: 35px;
+  padding: 24px;
+  text-align: center;
+  color: white;
+  background: #28215e;
+}
+
+footer a { color: #ffd6f0; }
+
+@media(max-width: 550px) {
+  .hero { padding: 24px 18px; }
+  .card { padding: 18px; }
+  nav { justify-content: center; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">🧠 ML Blog</div>
+  <a href="#intro">Introduction</a>
+  <a href="#types">Types</a>
+  <a href="#working">How It Works</a>
+  <a href="#demo">Mini Demo</a>
+  <a href="#conclusion">Conclusion</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-content">
+    <span class="pill">✨ Machine Learning Made Easy</span>
+    <h1>Recommendation Systems 💜</h1>
+    <p>How do apps know what you'll love next?</p>
+    <p>From movies to music, discover the magic of
+       personalised suggestions!</p>
+    <a href="#demo">
+      <button>Explore Your Recommendations ✨</button>
+    </a>
+  </div>
+  <div class="hero-art" aria-label="Books, music and technology">
+    🎧 📱 🎬
+    <div style="font-size:20px">Your taste, your world! 💗</div>
+    <div style="font-size:45px">⭐ 💖 🎵</div>
+  </div>
+</header>
+
+<main>
+
+<section class="card pink" id="intro">
+  <h2>💡 1. What Is a Recommendation System?</h2>
+  <p>
+    A recommendation system is a machine learning application
+    that suggests products, movies, songs or other items a user
+    may like. It learns from information such as ratings,
+    browsing history and user preferences.
+  </p>
+  <div class="mini">
+    <span class="emoji">📱 💕 🎁</span>
+    <p><strong>Imagine this:</strong> You watch romantic movies
+    on Netflix. The app may suggest other romantic movies because
+    your viewing history indicates that you enjoy them.</p>
+  </div>
+</section>
+
+<section class="card blue" id="types">
+  <h2>🎨 2. Types of Recommendation Systems</h2>
+  <div class="grid">
+    <div class="mini">
+      <span class="emoji">🎬</span>
+      <h3>Content-Based</h3>
+      <p>Suggests items similar to what you already like.</p>
+      <p>Example: More comedy movies after watching comedies.</p>
+    </div>
+    <div class="mini">
+      <span class="emoji">👯</span>
+      <h3>Collaborative Filtering</h3>
+      <p>Uses preferences or behaviour of similar users.</p>
+      <p>Example: People with similar tastes enjoyed this song.</p>
+    </div>
+    <div class="mini">
+      <span class="emoji">🪄</span>
+      <h3>Hybrid System</h3>
+      <p>Combines multiple recommendation approaches.</p>
+      <p>Example: Personalised suggestions using item features
+         and user behaviour.</p>
+    </div>
+  </div>
+</section>
+
+<section class="card yellow" id="working">
+  <h2>⚙️ 3. How Does It Work?</h2>
+  <p>Think of it as a little journey from your activity to a
+     personalised suggestion.</p>
+  <div class="flow">
+    <div class="flow-step">
+      <span class="emoji">👤</span>
+      <strong>Step 1</strong>
+      <p>Collect user preferences, ratings and activity.</p>
+    </div>
+    <div class="flow-step">
+      <span class="emoji">🔍</span>
+      <strong>Step 2</strong>
+      <p>Find patterns and similarities in the data.</p>
+    </div>
+    <div class="flow-step">
+      <span class="emoji">🤖</span>
+      <strong>Step 3</strong>
+      <p>Rank items that may interest the user.</p>
+    </div>
+    <div class="flow-step">
+      <span class="emoji">💖</span>
+      <strong>Step 4</strong>
+      <p>Show personalised recommendations.</p>
+    </div>
+  </div>
+  <p class="pill">User Data → Learning Algorithm → Suggestions</p>
+</section>
+
+<section class="card pink">
+  <h2>🌍 4. Real-Life Examples</h2>
+
+  <div class="example">
+    <span class="example-icon">🎞️</span>
+    <p><strong>Netflix</strong><br>
+    Suggests films and series based on viewing activity
+    and other signals.</p>
+  </div>
+
+  <div class="example">
+    <span class="example-icon">▶️</span>
+    <p><strong>YouTube</strong><br>
+    Recommends videos based on signals such as viewing
+    history and engagement.</p>
+  </div>
+
+  <div class="example">
+    <span class="example-icon">🎧</span>
+    <p><strong>Spotify</strong><br>
+    Creates personalised music suggestions and playlists.</p>
+  </div>
+
+  <div class="example">
+    <span class="example-icon">🛍️</span>
+    <p><strong>Amazon</strong><br>
+    Suggests products based on shopping activity and
+    related products.</p>
+  </div>
+</section>
+
+<section class="card lavender" id="demo">
+  <h2>🎀 5. Try It Yourself!</h2>
+  <p>Choose your favourite category and get some sample
+     recommendations. Your choice changes the results below.</p>
+
+  <label for="category"><strong>What do you love?</strong></label>
+  <select id="category">
+    <option value="movies">🎬 Movies</option>
+    <option value="music">🎵 Music</option>
+    <option value="books">📚 Books</option>
+    <option value="tech">💻 Technology</option>
+  </select>
+
+  <button onclick="recommend()">Get My Recommendations 💜</button>
+  <div id="results" aria-live="polite"></div>
+
+  <p><small>Note: This is a simple educational demo using
+  predefined examples, not a trained recommendation model.</small></p>
+</section>
+
+<section class="card green">
+  <h2>⚖️ 6. Advantages and Limitations</h2>
+  <div class="grid">
+    <div class="mini">
+      <h3>✅ Advantages</h3>
+      <ul>
+        <li>Personalised user experience.</li>
+        <li>Helps discover new items.</li>
+        <li>Saves time searching.</li>
+        <li>Can improve user engagement.</li>
+      </ul>
+    </div>
+    <div class="mini">
+      <h3>⚠️ Limitations</h3>
+      <ul>
+        <li>Needs useful, reliable data.</li>
+        <li>Can reflect bias in the data.</li>
+        <li>New users may have little history.</li>
+        <li>May repeatedly suggest similar items.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="card conclusion" id="conclusion">
+  <h2>🌈 7. Conclusion</h2>
+  <div style="font-size:55px">💻 💗 🎁</div>
+  <p>
+    Recommendation systems are an important application of
+    machine learning. They analyse user preferences and
+    behaviour to suggest relevant content, products and services.
+  </p>
+  <p>
+    From finding your next favourite song to discovering a new
+    movie, these systems make digital experiences more personal.
+    However, their quality depends on the data and methods used.
+  </p>
+  <h3>✨ Better suggestions, happier discoveries! ✨</h3>
+  <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
+    Back to Top ↑
+  </a>
+</section>
+
+</main>
+
+<footer>
+  <p>💜 Machine Learning Blog Project</p>
+  <p>Learn Today • Build Tomorrow ✨</p>
+  <p>Made with curiosity and a little bit of magic!</p>
+</footer>
+
+<script>
+const suggestions = {
+  movies: [
+    ["🎬", "Interstellar", "Sci-Fi • Space adventure"],
+    ["🧩", "Inception", "Sci-Fi • Mind-bending mystery"],
+    ["🦇", "The Dark Knight", "Action • Superhero"],
+    ["🪄", "Harry Potter", "Fantasy • Magic"]
+  ],
+  music: [
+    ["🎸", "Acoustic Chill", "Relaxing guitar music"],
+    ["🎹", "Piano Dreams", "Calm instrumental music"],
+    ["🎤", "Pop Hits", "Upbeat pop music"],
+    ["🎧", "Lo-Fi Beats", "Music for studying"]
+  ],
+  books: [
+    ["🪐", "The Martian", "Science fiction"],
+    ["🕵️", "Sherlock Holmes", "Mystery"],
+    ["🐉", "Fantasy Worlds", "Fantasy adventures"],
+    ["🌱", "Atomic Habits", "Personal development"]
+  ],
+  tech: [
+    ["🤖", "Artificial Intelligence", "Explore intelligent machines"],
+    ["📊", "Data Science", "Discover insights from data"],
+    ["💻", "Web Development", "Build websites"],
+    ["🛡️", "Cybersecurity", "Learn digital safety"]
+  ]
+};
+
+function recommend() {
+  const category = document.getElementById("category").value;
+  const results = document.getElementById("results");
+
+  results.innerHTML =
+    "<h3>💖 Your Recommendations</h3>" +
+    suggestions[category].map(item =>
+      `<div class="movie">
+        <span>${item[0]}</span>
+        <strong>${item[1]}</strong><br>
+        <small>${item[2]}</small>
+      </div>`
+    ).join("");
+}
+
+recommend();
+</script>
+
+</body>
+</html>
